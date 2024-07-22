@@ -64,6 +64,7 @@ contract DappBanX is Ownable, ReentrancyGuard {
     string memory images, 
     uint rooms, 
     uint price) public{
+        //modifier to check if the parameters are valid
         require(bytes(name).length > 0, 'Name cannot be empty');
         require(bytes(description).length > 0, 'Description cannot be empty');
         require(bytes(location).length > 0, 'Location cannot be empty');
@@ -71,7 +72,33 @@ contract DappBanX is Ownable, ReentrancyGuard {
         require(rooms > 0, 'Roomes cannot be zero(0)');
         require(price > 0, 'Price cannot be zero(0)');
 
+        //increase the total number of apartments on the system by one
+        _totalApartments.increment();
 
+        //create an instance of apartment struct
+        ApartmentStruct memory apartment;
+
+        apartment.id = _totalApartments.current(); //this will return the current value of the _totalApartments counter
+        apartment.name = name;
+        apartment.description = description;
+        apartment.location = location;
+        apartment.images = images;
+        apartment.rooms = rooms;
+        apartment.price = price;
+        apartment.owner = msg.sender;
+        apartment.timestamp = currentTime();
+
+        //to check if the apartment Exist
+        //               id          &  value
+        apartmentExist[apartment.id] = true;
+        apartments[apartment.id] = apartment;
+
+    }
+
+    //This function is to convert solidity timestamp (10 digits) into the standard timestamp of 13 digits
+    function currentTime() internal view returns (uint256) {
+        //block.timestamp will produce 10 digits of timestamp
+        return (block.timestamp * 1000) + 1000; 
     }
 
 }
