@@ -45,11 +45,11 @@ contract DappBanX is Ownable, ReentrancyGuard {
     uint public taxPercent; //amount for tax
 
     mapping(uint => ApartmentStruct) apartments;
-    mapping(uint => BookingStruct[]) bookingsOf;
+    mapping(uint => BookingStruct[]) bookingsOf; //one apartment can have many bookings
     mapping(uint => ReviewStruct[]) reviewsOf;
     mapping(uint => bool) apartmentExist;
-    mapping(uint => uint[]) bookedDates;
-    mapping(uint => mapping(uint => bool)) isDateBooked;
+    mapping(uint => uint[]) bookedDates; //one apartment can have many booked dates
+    mapping(uint => mapping(uint => bool)) isDateBooked; //one apartment, for a particular date can be booked
     mapping(address => mapping(uint => bool)) hasBooked;
 
     constructor(uint _taxPercent, uint _securityFee) {
@@ -167,6 +167,21 @@ contract DappBanX is Ownable, ReentrancyGuard {
         require(apartmentExist[aid], 'Apartment not found!');
         require(msg.value >= (totalPrice + totalSecurityFee), 'Insufficient fund supplied!');
         require(datesCleared(aid, dates), 'One or more dates not available!');
+
+        //for each of the dates, we are going to call the booking function
+        for(uint i=0; i < dates.length; i++) {
+            //created an instance of booking struct
+            BookingStruct memory booking;
+            booking.id = bookingsOf[aid].length;
+            booking.aid = aid;
+            booking.tenant = msg.sender;
+            booking.date = dates[i];
+            booking.price = apartments[aid].price;
+            bookingsOf[aid].push(booking);// an apartment can have many bookings(days)
+            bookedDates[aid].push(dates[i]); //an apartment can have many booked dates
+            isDateBooked[aid][dates[i]] = true;
+            hasBooked[msg.sender][dates[i]] = true;
+        }
     }
 
     function datesCleared(uint aid, uint [] memory dates) internal view returns (bool) {
