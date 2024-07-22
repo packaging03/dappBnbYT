@@ -136,6 +136,11 @@ contract DappBanX is Ownable, ReentrancyGuard {
         apartments[id].deleted = true;
     }
 
+    //function to retrieve a single apartment using the id
+    function getApartment(uint id) public view returns (ApartmentStruct memory) {
+        return apartments[id];
+    }
+
 
 
     //This function is to convert solidity timestamp (10 digits) into the standard timestamp of 13 digits
