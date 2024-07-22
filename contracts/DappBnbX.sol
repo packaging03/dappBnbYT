@@ -94,7 +94,7 @@ contract DappBanX is Ownable, ReentrancyGuard {
         apartments[apartment.id] = apartment;
     }
 
-     function updateApartment
+    function updateApartment
     (string memory name, 
     string memory description, 
     string memory location, 
@@ -124,6 +124,19 @@ contract DappBanX is Ownable, ReentrancyGuard {
         //to update the modified apartment
         apartments[apartment.id] = apartment;
     }
+
+    function deleteApartment(uint id) public{
+        //modifier to check if the parameters are valid
+        require(apartmentExist[id], 'Apartment not found');
+        require(msg.sender == apartments[id].owner, 'Unauthorized entity!');
+        
+        //setting the apartmentExist to be false
+        apartmentExist[id] = false;
+        //to delete the apartment using the id
+        apartments[id].deleted = true;
+    }
+
+
 
     //This function is to convert solidity timestamp (10 digits) into the standard timestamp of 13 digits
     function currentTime() internal view returns (uint256) {
