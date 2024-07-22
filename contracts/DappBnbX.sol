@@ -41,9 +41,37 @@ contract DappBanX is Ownable, ReentrancyGuard {
         address owner;
     }
 
-    uint public securityFee;
-    uint public taxPercent;
+    uint public securityFee; //  how much percentage we need to charge the user when he wants a refund
+    uint public taxPercent; //amount for tax
 
-    
+    mapping(uint => ApartmentStruct) apartments;
+    mapping(uint => BookingStruct[]) bookingsOf;
+    mapping(uint => ReviewStruct[]) reviewsOf;
+    mapping(uint => bool) apartmentExist;
+    mapping(uint => uint[]) bookedDates;
+    mapping(uint => mapping(uint => bool)) isDateBooked;
+    mapping(address => mapping(uint => bool)) hasBooked;
+
+    constructor(uint _taxPercent, uint _securityFee) {
+        taxPercent = _taxPercent;
+        securityFee = _securityFee;
+    }
+
+    function createApartment
+    (string memory name, 
+    string memory description, 
+    string memory location, 
+    string memory images, 
+    uint rooms, 
+    uint price) public{
+        require(bytes(name).length > 0, 'Name cannot be empty');
+        require(bytes(description).length > 0, 'Description cannot be empty');
+        require(bytes(location).length > 0, 'Location cannot be empty');
+        require(bytes(images).length > 0, 'Images cannot be empty');
+        require(rooms > 0, 'Roomes cannot be zero(0)');
+        require(price > 0, 'Price cannot be zero(0)');
+
+
+    }
 
 }
