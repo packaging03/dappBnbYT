@@ -141,6 +141,23 @@ contract DappBanX is Ownable, ReentrancyGuard {
         return apartments[id];
     }
 
+    function getApartments() public view returns (ApartmentStruct[] memory Apartments) { 
+        uint256 available;
+        for(uint i = 1; i <= _totalApartments.current(); i++) {
+            if(!apartments[i].deleted) available++;
+        }
+
+        Apartments = new ApartmentStruct[](available);
+
+        uint256 index;
+        for(uint i =1; i<= _totalApartments.current(); i++) {
+            if(!apartments[i].deleted) {
+                Apartments[index++] = apartments[i];
+            }
+        }
+    }
+
+
 
 
     //This function is to convert solidity timestamp (10 digits) into the standard timestamp of 13 digits
