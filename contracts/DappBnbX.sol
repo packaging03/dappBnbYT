@@ -180,9 +180,10 @@ contract DappBanX is Ownable, ReentrancyGuard {
             bookingsOf[aid].push(booking);// an apartment can have many bookings(days)
             bookedDates[aid].push(dates[i]); //an apartment can have many booked dates
             isDateBooked[aid][dates[i]] = true;
-            hasBooked[msg.sender][dates[i]] = true;
+            // hasBooked[msg.sender][dates[i]] = true;
         }
     }
+
 
     function datesCleared(uint aid, uint [] memory dates) internal view returns (bool) {
         bool dateNotUsed = true;
@@ -196,9 +197,125 @@ contract DappBanX is Ownable, ReentrancyGuard {
         }
     }
 
+    function checkInApartment(uint aid, uint bookingId) public nonReentrant() {
+        //To get a singluar bookingstruct for an apartmemt 
+        BookingStruct memory booking  = bookingsOf[aid][bookingId];
+        //the caller of this method must be a tenant
+        require(msg.sender == booking.tenant, "Unauthorized Entity");
+        //to check if the booking has already been checked in for that specific date
+        require(!booking.checked, 'Double checking not allowed');
+
+        //bookingstruct for that partial apartment is chekced in
+        bookingsOf[aid][bookingId].checked = true;
+        //this person booked this particular date
+        hasBooked[msg.sender][booking.date] = true;
+        //calculating the amount of money for tax and security fee
+        uint tax = (booking.price * taxPercent) / 100;
+        uint fee = (booking.price * securityFee) / 100;
+
+        payTo(apartments[aid].owner, (booking.price - tax));
+        payTo(owner(), tax); //owner() refers to the person that deployed/owned this contract
+        payTo(msg.sender, fee);
+    }
+
+
+    function claimFunds(uint aid, uint bookingId) public {
+        require(msg.sender == apartments[aid].owner, 'Unauthorized entity');
+        require(!bookingsOf[aid][bookingId].checked, 'Apartment already checked on this date!');
+
+        uint price = bookingsOf[aid][bookingId].price;
+        uint fee = (price * taxPercent) / 100;
+
+        payTo(apartments[aid].owner, (price - fee));
+        payTo(owner(), fee);
+        payTo(msg.sender, securityFee);
+    }
+
+    function refundBooking(uint aid, uint bookingId) public nonReentrant {
+        BookingStruct memory booking = bookingsOf[aid][bookingId];
+        require(!booking.checked, 'Apartment already checked on this date!');
+        require(isDateBooked[aid][booking.date], 'Did not book on this date!');
+
+        if (msg.sender != owner()) {
+        require(msg.sender == booking.tenant, 'Unauthorized tenant!');
+        require(booking.date > currentTime(), 'Can no longer refund, booking date started');
+        }
+
+        bookingsOf[aid][bookingId].cancelled = true;
+        isDateBooked[aid][booking.date] = false;
+
+        uint lastIndex = bookedDates[aid].length - 1;
+        uint lastBookingId = bookedDates[aid][lastIndex];
+        bookedDates[aid][bookingId] = lastBookingId;
+        bookedDates[aid].pop();
+
+        uint fee = (booking.price * securityFee) / 100;
+        uint collateral = fee / 2;
+
+        payTo(apartments[aid].owner, collateral);
+        payTo(owner(), collateral);
+        payTo(msg.sender, booking.price);
+    }
+
+    function getUnavailableDates(uint aid) public view returns (uint[] memory) {
+        return bookedDates[aid];
+    }
+
+    function getBookings(uint aid) public view returns (BookingStruct[] memory) {
+        return bookingsOf[aid];
+    }
+
+    function getQualifiedReviewers(uint aid) public view returns (address[] memory Tenants) {
+        uint256 available;
+        for (uint i = 0; i < bookingsOf[aid].length; i++) {
+        if (bookingsOf[aid][i].checked) available++;
+        }
+
+        Tenants = new address[](available);
+
+        uint256 index;
+        for (uint i = 0; i < bookingsOf[aid].length; i++) {
+        if (bookingsOf[aid][i].checked) {
+            Tenants[index++] = bookingsOf[aid][i].tenant;
+        }
+        }
+    }
+
+    function getBooking(uint aid, uint bookingId) public view returns (BookingStruct memory) {
+        return bookingsOf[aid][bookingId];
+    }
 
 
 
+
+    function payTo(address to, uint256 amount) internal {
+        (bool success, ) = payable(to).call{ value: amount }('');
+        require(success);
+    }
+
+     function addReview(uint aid, string memory reviewText) public {
+        require(appartmentExist[aid], 'Appartment not available');
+        require(hasBooked[msg.sender][aid], 'Book first before review');
+        require(bytes(reviewText).length > 0, 'Review text cannot be empty');
+
+        ReviewStruct memory review;
+
+        review.aid = aid;
+        review.id = reviewsOf[aid].length;
+        review.reviewText = reviewText;
+        review.timestamp = currentTime();
+        review.owner = msg.sender;
+
+        reviewsOf[aid].push(review);
+    }
+
+    function getReviews(uint aid) public view returns (ReviewStruct[] memory) {
+        return reviewsOf[aid];
+    }
+
+    function tenantBooked(uint appartmentId) public view returns (bool) {
+        return hasBooked[msg.sender][appartmentId];
+    }
 
     //This function is to convert solidity timestamp (10 digits) into the standard timestamp of 13 digits
     function currentTime() internal view returns (uint256) {
