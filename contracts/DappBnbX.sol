@@ -92,7 +92,37 @@ contract DappBanX is Ownable, ReentrancyGuard {
         //               id          &  value
         apartmentExist[apartment.id] = true;
         apartments[apartment.id] = apartment;
+    }
 
+     function updateApartment
+    (string memory name, 
+    string memory description, 
+    string memory location, 
+    string memory images, 
+    uint rooms, 
+    uint id, 
+    uint price) public{
+        //modifier to check if the parameters are valid
+        require(apartmentExist[id], 'Apartment not found');
+        require(msg.sender == apartments[id].owner, 'Unauthorized personnel, owner only allowed');
+        require(bytes(name).length > 0, 'Name cannot be empty');
+        require(bytes(description).length > 0, 'Description cannot be empty');
+        require(bytes(location).length > 0, 'Location cannot be empty');
+        require(bytes(images).length > 0, 'Images cannot be empty');
+        require(rooms > 0, 'Roomes cannot be zero(0)');
+        require(price > 0, 'Price cannot be zero(0)');
+
+        //create an instance of apartment struct
+        ApartmentStruct memory apartment = apartments[id];
+        apartment.name = name;
+        apartment.description = description;
+        apartment.location = location;
+        apartment.images = images;
+        apartment.rooms = rooms;
+        apartment.price = price;
+
+        //to update the modified apartment
+        apartments[apartment.id] = apartment;
     }
 
     //This function is to convert solidity timestamp (10 digits) into the standard timestamp of 13 digits
