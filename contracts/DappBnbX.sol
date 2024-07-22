@@ -152,10 +152,35 @@ contract DappBanX is Ownable, ReentrancyGuard {
         uint256 index;
         for(uint i =1; i<= _totalApartments.current(); i++) {
             if(!apartments[i].deleted) {
-                Apartments[index++] = apartments[i];
+                Apartments[index] = apartments[i];
+                index++;
             }
         }
     }
+
+    function bookApartment(uint aid, uint[] memory dates) public payable {
+        //get the totalPrice of the apartment multiply by the number of dates
+        uint totalPrice = apartments[aid].price * dates.length;
+        //get the totalPrice for securityFee e.g (5000 * 5) / 100
+        uint totalSecurityFee = (totalPrice * securityFee) / 100;
+        //check if the said apartment Exist
+        require(apartmentExist[aid], 'Apartment not found!');
+        require(msg.value >= (totalPrice + totalSecurityFee), 'Insufficient fund supplied!');
+        require(datesCleared(aid, dates), 'One or more dates not available!');
+    }
+
+    function datesCleared(uint aid, uint [] memory dates) internal view returns (bool) {
+        bool dateNotUsed = true;
+        
+        for(uint i=0; i < dates.length; i++) {
+            for(uint j =0; j < bookedDates[aid].length; j++) { 
+                if(dates[i] == bookedDates[aid][j]) {
+                    dateNotUsed = false;
+                }
+            }
+        }
+    }
+
 
 
 
