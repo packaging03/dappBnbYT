@@ -203,12 +203,12 @@ contract DappBanX is Ownable, ReentrancyGuard {
         //the caller of this method must be a tenant
         require(msg.sender == booking.tenant, "Unauthorized Entity");
         //to check if the booking has already been checked in for that specific date
-        require(!booking.checked, 'Double checking not allowed');
+        require(!booking.checked, 'Apartment already checked on this date!');
 
         //bookingstruct for that partial apartment is chekced in
         bookingsOf[aid][bookingId].checked = true;
         //this person booked this particular date
-        hasBooked[msg.sender][booking.date] = true;
+        hasBooked[msg.sender][aid] = true;
         //calculating the amount of money for tax and security fee
         uint tax = (booking.price * taxPercent) / 100;
         uint fee = (booking.price * securityFee) / 100;
@@ -218,10 +218,10 @@ contract DappBanX is Ownable, ReentrancyGuard {
         payTo(msg.sender, fee);
     }
 
-
-    function claimFunds(uint aid, uint bookingId) public {
+    //TODO
+    function claimFunds(uint aid, uint bookingId) public nonReentrant() {
         require(msg.sender == apartments[aid].owner, 'Unauthorized entity');
-        require(!bookingsOf[aid][bookingId].checked, 'Apartment already checked on this date!');
+        require(!bookingsOf[aid][bookingId].checked, 'Apartment already checked-in on this date!');
 
         uint price = bookingsOf[aid][bookingId].price;
         uint fee = (price * taxPercent) / 100;
@@ -233,7 +233,8 @@ contract DappBanX is Ownable, ReentrancyGuard {
 
     function refundBooking(uint aid, uint bookingId) public nonReentrant {
         BookingStruct memory booking = bookingsOf[aid][bookingId];
-        require(!booking.checked, 'Apartment already checked on this date!');
+        require(!booking.checked, 'Apartment already checked in on this date!');
+        //this is to checked if the date was booked for that particular apartment
         require(isDateBooked[aid][booking.date], 'Did not book on this date!');
 
         if (msg.sender != owner()) {
@@ -243,10 +244,10 @@ contract DappBanX is Ownable, ReentrancyGuard {
 
         bookingsOf[aid][bookingId].cancelled = true;
         isDateBooked[aid][booking.date] = false;
-
+        //not clear
         uint lastIndex = bookedDates[aid].length - 1;
         uint lastBookingId = bookedDates[aid][lastIndex];
-        bookedDates[aid][bookingId] = lastBookingId;
+        bookedDates[aid][bookingId] = lastBookingId; //not clear
         bookedDates[aid].pop();
 
         uint fee = (booking.price * securityFee) / 100;
@@ -265,27 +266,9 @@ contract DappBanX is Ownable, ReentrancyGuard {
         return bookingsOf[aid];
     }
 
-    function getQualifiedReviewers(uint aid) public view returns (address[] memory Tenants) {
-        uint256 available;
-        for (uint i = 0; i < bookingsOf[aid].length; i++) {
-        if (bookingsOf[aid][i].checked) available++;
-        }
-
-        Tenants = new address[](available);
-
-        uint256 index;
-        for (uint i = 0; i < bookingsOf[aid].length; i++) {
-        if (bookingsOf[aid][i].checked) {
-            Tenants[index++] = bookingsOf[aid][i].tenant;
-        }
-        }
-    }
-
     function getBooking(uint aid, uint bookingId) public view returns (BookingStruct memory) {
         return bookingsOf[aid][bookingId];
     }
-
-
 
 
     function payTo(address to, uint256 amount) internal {
@@ -294,7 +277,7 @@ contract DappBanX is Ownable, ReentrancyGuard {
     }
 
      function addReview(uint aid, string memory reviewText) public {
-        require(appartmentExist[aid], 'Appartment not available');
+        require(apartmentExist[aid], 'Appartment not available');
         require(hasBooked[msg.sender][aid], 'Book first before review');
         require(bytes(reviewText).length > 0, 'Review text cannot be empty');
 
@@ -313,6 +296,21 @@ contract DappBanX is Ownable, ReentrancyGuard {
         return reviewsOf[aid];
     }
 
+    function getQualifiedReviewers(uint aid) public view returns (address[] memory Tenants) {
+        uint256 available;
+        for (uint i = 0; i < bookingsOf[aid].length; i++) {
+        if (bookingsOf[aid][i].checked) available++;
+        }
+
+        Tenants = new address[](available);
+
+        uint256 index;
+        for (uint i = 0; i < bookingsOf[aid].length; i++) {
+        if (bookingsOf[aid][i].checked) {
+            Tenants[index++] = bookingsOf[aid][i].tenant;
+        }
+        }
+    }
     function tenantBooked(uint appartmentId) public view returns (bool) {
         return hasBooked[msg.sender][appartmentId];
     }
