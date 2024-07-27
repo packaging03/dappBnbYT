@@ -31,6 +31,7 @@ contract DappBanX is Ownable, ReentrancyGuard {
         uint price;
         bool checked;
         bool cancelled;
+        bool abandoned;
     }
 
     struct ReviewStruct {
@@ -220,15 +221,28 @@ contract DappBanX is Ownable, ReentrancyGuard {
 
     //TODO
     function claimFunds(uint aid, uint bookingId) public nonReentrant() {
-        require(msg.sender == apartments[aid].owner, 'Unauthorized entity');
-        require(!bookingsOf[aid][bookingId].checked, 'Apartment already checked-in on this date!');
+        // require(msg.sender == apartments[aid].owner, 'Unauthorized entity');
+        // require(!bookingsOf[aid][bookingId].checked, 'Apartment already checked-in on this date!');
 
-        uint price = bookingsOf[aid][bookingId].price;
-        uint fee = (price * taxPercent) / 100;
+        // uint price = bookingsOf[aid][bookingId].price;
+        // uint fee = (price * taxPercent) / 100;
 
-        payTo(apartments[aid].owner, (price - fee));
-        payTo(owner(), fee);
-        payTo(msg.sender, securityFee);
+        // payTo(apartments[aid].owner, (price - fee));
+        // payTo(owner(), fee);
+        // payTo(msg.sender, securityFee);
+        BookingStruct memory booking = bookingsOf[aid][bookingId];
+        require(msg.sender == apartments[aid].owner || msg.sender == owner(), 'Unauthorized entity');
+        require(!booking.checked, 'Already checked in');
+        require(booking.date < currentTime(), 'Not allowed, booking date not exceeded');
+
+        bookingsOf[aid][bookingId].abandoned = true;
+        uint tax = (booking.price * taxPercent) / 100;
+        uint fee = (booking.price * securityFee) / 100;
+
+        payTo(apartments[aid].owner, (booking.price - tax));
+        payTo(owner(), tax);
+        payTo(booking.tenant, fee);
+
     }
 
     function refundBooking(uint aid, uint bookingId) public nonReentrant {
