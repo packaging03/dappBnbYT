@@ -33,3 +33,26 @@ const getEthereumContracts = async () => {
     return contract
   }
 }
+
+const getApartments = async () => {
+  const contract = await getEthereumContracts()
+  const apartments = await contract.getApartments()
+  return apartments
+}
+
+const structuredApartments = (apartments) =>
+  apartments.map((apartment) => ({
+    id: Number(apartment.id),
+    name: apartment.name,
+    owner: apartment.owner,
+    description: apartment.description,
+    location: apartment.location,
+    price: fromWei(apartment.price),
+    deleted: apartment.deleted,
+    images: apartment.images.split(','),
+    rooms: Number(apartment.rooms),
+    timestamp: Number(apartment.timestamp),
+    booked: apartment.booked,
+  }))
+
+export { getApartments }

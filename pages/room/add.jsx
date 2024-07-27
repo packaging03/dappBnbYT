@@ -206,7 +206,7 @@ export default function Add() {
             }`}
             disabled={!address}
           >
-            Add Appartment
+            Add Apartment
           </button>
         </form>
       </div>

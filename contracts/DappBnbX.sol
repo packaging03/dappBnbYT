@@ -96,12 +96,11 @@ contract DappBanX is Ownable, ReentrancyGuard {
     }
 
     function updateApartment
-    (string memory name, 
+    (uint id, string memory name, 
     string memory description, 
     string memory location, 
     string memory images, 
-    uint rooms, 
-    uint id, 
+    uint rooms,
     uint price) public{
         //modifier to check if the parameters are valid
         require(apartmentExist[id], 'Apartment not found');
@@ -167,7 +166,7 @@ contract DappBanX is Ownable, ReentrancyGuard {
         //check if the said apartment Exist
         require(apartmentExist[aid], 'Apartment not found!');
         require(msg.value >= (totalPrice + totalSecurityFee), 'Insufficient fund supplied!');
-        require(datesCleared(aid, dates), 'One or more dates not available!');
+        require(datesCleared(aid, dates), 'One or more dates not availabless!');
 
         //for each of the dates, we are going to call the booking function
         for(uint i=0; i < dates.length; i++) {
@@ -188,7 +187,6 @@ contract DappBanX is Ownable, ReentrancyGuard {
 
     function datesCleared(uint aid, uint [] memory dates) internal view returns (bool) {
         bool dateNotUsed = true;
-        
         for(uint i=0; i < dates.length; i++) {
             for(uint j =0; j < bookedDates[aid].length; j++) { 
                 if(dates[i] == bookedDates[aid][j]) {
@@ -196,6 +194,7 @@ contract DappBanX is Ownable, ReentrancyGuard {
                 }
             }
         }
+        return dateNotUsed;
     }
 
     function checkInApartment(uint aid, uint bookingId) public nonReentrant() {
@@ -291,7 +290,7 @@ contract DappBanX is Ownable, ReentrancyGuard {
     }
 
      function addReview(uint aid, string memory reviewText) public {
-        require(apartmentExist[aid], 'Appartment not available');
+        require(apartmentExist[aid], 'Apartment not available');
         require(hasBooked[msg.sender][aid], 'Book first before review');
         require(bytes(reviewText).length > 0, 'Review text cannot be empty');
 
@@ -325,8 +324,8 @@ contract DappBanX is Ownable, ReentrancyGuard {
         }
         }
     }
-    function tenantBooked(uint appartmentId) public view returns (bool) {
-        return hasBooked[msg.sender][appartmentId];
+    function tenantBooked(uint apartmentId) public view returns (bool) {
+        return hasBooked[msg.sender][apartmentId];
     }
 
     //This function is to convert solidity timestamp (10 digits) into the standard timestamp of 13 digits

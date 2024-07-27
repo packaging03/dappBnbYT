@@ -1,6 +1,6 @@
 export const globalStates = {
-  appartments: [],
-  appartment: null,
+  apartments: [],
+  apartment: null,
   reviews: [],
   reviewModal: 'scale-0',
   securityFee: 0,

@@ -80,7 +80,7 @@ const generateFakeApartment = (count) => {
 }
 
 async function createApartments(contract, apartment) {
-  const tx = await contract.createAppartment(
+  const tx = await contract.createApartment(
     apartment.name,
     apartment.description,
     apartment.location,
@@ -99,32 +99,32 @@ async function bookApartments(contract, aid, dates) {
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 async function main() {
-  let dappBnbContract
+  let dappBanXContract
 
   try {
     const contractAddresses = fs.readFileSync('./contracts/contractAddress.json', 'utf8')
-    const { dappBnbContract: dappBnbAddress } = JSON.parse(contractAddresses)
+    const { dappBanXContract: dappBnbAddress } = JSON.parse(contractAddresses)
 
-    dappBnbContract = await ethers.getContractAt('DappBnb', dappBnbAddress)
+    dappBanXContract = await ethers.getContractAt('DappBanX', dappBnbAddress)
     const dates1 = [1678492800000, 1678579200000, 1678665600000]
 
-    // Process #1
+    //Process #1
     await Promise.all(
       generateFakeApartment(dataCount).map(async (apartment) => {
-        await createApartments(dappBnbContract, apartment)
+        await createApartments(dappBanXContract, apartment)
       })
     )
 
-    await delay(2500) // Wait for 2.5 seconds
+    // await delay(2500) // Wait for 2.5 seconds
 
-    // Process #2
-    await Promise.all(
-      Array(dataCount)
-        .fill()
-        .map(async (_, i) => {
-          await bookApartments(dappBnbContract, i + 1, dates1)
-        })
-    )
+    //Process #2
+    // await Promise.all(
+    //   Array(dataCount)
+    //     .fill()
+    //     .map(async (_, i) => {
+    //       await bookApartments(dappBanXContract, i + 1, dates1)
+    //     })
+    // )
 
     console.log('Items dummy data seeded...')
   } catch (error) {

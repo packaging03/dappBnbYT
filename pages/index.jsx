@@ -11,13 +11,13 @@ export default function Home({ apartmentsData }) {
       </Head>
 
       <Category />
-      <Collection appartments={apartmentsData} />
+      <Collection apartments={apartmentsData} />
     </div>
   )
 }
 
 export const getServerSideProps = async () => {
-  const apartmentsData = generateFakeApartment(5)
+  const apartmentsData = getApartment()
 
   return {
     props: {

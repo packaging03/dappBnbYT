@@ -109,7 +109,7 @@ export const generateFakeReviews = (count) => {
   const reviews = []
   for (let i = 0; i < count; i++) {
     const id = i + 1
-    const appartmentId = faker.number.int({ min: 1, max: 999 })
+    const apartmentId = faker.number.int({ min: 1, max: 999 })
     const rating = faker.number.int({ min: 1, max: 5 })
     const text = faker.lorem.sentence()
     const timestamp = faker.date.past().getTime()
@@ -120,7 +120,7 @@ export const generateFakeReviews = (count) => {
 
     const review = {
       id,
-      appartmentId,
+      apartmentId,
       rating,
       text,
       owner,
@@ -132,11 +132,3 @@ export const generateFakeReviews = (count) => {
 
   return reviews
 }
-
-// struct ReviewStruct {
-//   uint id;
-//   uint appartmentId;
-//   string reviewText;
-//   uint timestamp;
-//   address owner;
-// }
