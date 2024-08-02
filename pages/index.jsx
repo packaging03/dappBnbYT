@@ -1,10 +1,9 @@
 import Head from 'next/head'
-import { generateFakeApartment } from '@/utils/fakeData'
 import { Category, Collection } from '@/components'
 import { getMyApartments } from '@/services/blockchain'
 
 export default function Home({ apartmentsData }) {
-  //console.log(apartmentsData)
+  
 
   return (
     <div>
