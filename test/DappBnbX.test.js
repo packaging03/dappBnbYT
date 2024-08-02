@@ -191,7 +191,7 @@ describe('Contracts', () => {
           contract.connect(tenant1).bookApartment(id, dates1, {
             value: toWei(price * 0 + securityFee),
           })
-        ).to.be.revertedWith('Insufficient fund supplied!')
+        ).to.be.revertedWith('Insufficient fund!')
       })
     })
   })
