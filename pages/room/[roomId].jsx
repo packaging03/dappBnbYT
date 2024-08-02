@@ -26,7 +26,7 @@ export default function Room({
   const reviews = reviewsData
 
   const handleReviewOpen = () => {}
-  console.log(apartment)
+  
   return (
     <>
       <Head>

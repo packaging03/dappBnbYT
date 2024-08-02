@@ -7,9 +7,7 @@ const Bookings = ({ apartmentData, bookingsData }) => {
   const { roomId } = router.query
   const apartment = apartmentData
   const bookings = bookingsData
-
-  console.log(bookingsData);
-
+  
   return (
     <div className="w-full sm:w-3/5 mx-auto mt-8">
       <h1 className="text-center text-3xl text-black font-bold">Bookings</h1>
