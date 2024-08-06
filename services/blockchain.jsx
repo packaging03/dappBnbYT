@@ -34,13 +34,13 @@ const getEthereumContracts = async () => {
 const getMyApartments = async () => {
   const contract = await getEthereumContracts()
   const apartments = await contract.getApartments()
-  return structureAppartments(apartments)
+  return structureApartments(apartments)
 }
 
 const getApartment = async (id) => {
   const contract = await getEthereumContracts()
   const apartment = await contract.getApartment(id)
-  return structureAppartments([apartment])[0]
+  return structureApartments([apartment])[0]
 }
 
 const getBookings = async (id) => {
@@ -82,7 +82,7 @@ const createApartment = async (apartment) => {
 
   try {
     const contract = await getEthereumContracts()
-    tx = await contract.createAppartment(
+    tx = await contract.createApartment(
       apartment.name,
       apartment.description,
       apartment.location,
@@ -107,7 +107,7 @@ const updateApartment = async (apartment) => {
 
   try {
     const contract = await getEthereumContracts()
-    tx = await contract.updateAppartment(
+    tx = await contract.updateApartment(
       apartment.id,
       apartment.name,
       apartment.description,
@@ -133,7 +133,7 @@ const deleteApartment = async (aid) => {
 
   try {
     const contract = await getEthereumContracts()
-    tx = await contract.deleteAppartment(aid)
+    tx = await contract.deleteApartment(aid)
     await tx.wait()
 
     return Promise.resolve(tx)
@@ -229,19 +229,19 @@ const addReview = async (aid, comment) => {
   }
 }
 
-const structureAppartments = (appartments) =>
-  appartments.map((appartment) => ({
-    id: Number(appartment.id),
-    name: appartment.name,
-    owner: appartment.owner,
-    description: appartment.description,
-    location: appartment.location,
-    price: fromWei(appartment.price),
-    deleted: appartment.deleted,
-    images: appartment.images.split(','),
-    rooms: Number(appartment.rooms),
-    timestamp: Number(appartment.timestamp),
-    booked: appartment.booked,
+const structureApartments = (apartments) =>
+  apartments.map((apartment) => ({
+    id: Number(apartment.id),
+    name: apartment.name,
+    owner: apartment.owner,
+    description: apartment.description,
+    location: apartment.location,
+    price: fromWei(apartment.price),
+    deleted: apartment.deleted,
+    images: apartment.images.split(','),
+    rooms: Number(apartment.rooms),
+    timestamp: Number(apartment.timestamp),
+    booked: apartment.booked,
   }))
 
 const structuredBookings = (bookings) =>
