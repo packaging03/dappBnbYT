@@ -157,7 +157,6 @@ const bookApartment = async ({ aid, timestamps, amount }) => {
 
     await tx.wait()
     const bookedDates = await getBookedDates(aid)
-
     store.dispatch(setTimestamps(bookedDates))
     return Promise.resolve(tx)
   } catch (error) {
