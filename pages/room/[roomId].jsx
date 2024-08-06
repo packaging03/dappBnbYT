@@ -9,6 +9,9 @@ import {
   getSecurityFee,
 } from '@/services/blockchain'
 import { Title, ImageGrid, Description, Calendar, Actions, Review, AddReview } from '@/components'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import { globalActions } from '@/store/globalSlices'
 
 export default function Room({
   apartmentData,
@@ -17,15 +20,33 @@ export default function Room({
   securityFee,
   qualifiedReviewers,
 }) {
+  const dispatch = useDispatch()
+  const { apartment, timestamps, reviews } = useSelector(
+    (states) => states.globalStates
+  )
+  const { setApartment, setTimestamps, setReviews, setSecurityFee } = globalActions
+
   const router = useRouter()
   const { roomId } = router.query
   const { address } = useAccount()
-  const apartment = apartmentData
-  const timestamps = timestampsData
-  const reviews = reviewsData
+
+  useEffect(() => {
+    dispatch(setApartment(apartmentData))
+    dispatch(setTimestamps(timestampsData))
+    dispatch(setReviews(reviewsData))
+    dispatch(setSecurityFee(securityFee))
+  }, [
+    dispatch,
+    setApartment,
+    setTimestamps,
+    setReviews,
+    apartmentData,
+    timestampsData,
+    reviewsData,
+  ])
 
   const handleReviewOpen = () => {}
-  
+
   return (
     <>
       <Head>
