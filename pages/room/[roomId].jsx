@@ -21,10 +21,8 @@ export default function Room({
   qualifiedReviewers,
 }) {
   const dispatch = useDispatch()
-  const { apartment, timestamps, reviews } = useSelector(
-    (states) => states.globalStates
-  )
-  const { setApartment, setTimestamps, setReviews, setSecurityFee } = globalActions
+  const { apartment, timestamps, reviews } = useSelector((states) => states.globalStates)
+  const { setApartment, setTimestamps, setReviews, setSecurityFee, setReviewModal } = globalActions
 
   const router = useRouter()
   const { roomId } = router.query
@@ -45,7 +43,9 @@ export default function Room({
     reviewsData,
   ])
 
-  const handleReviewOpen = () => {}
+  const handleReviewOpen = () => {
+    dispatch(setReviewModal('scale-100'))
+  }
 
   return (
     <>
@@ -75,7 +75,7 @@ export default function Room({
             {qualifiedReviewers?.includes(address) && (
               <button
                 className="cursor-pointer text-pink-500 hover:text-pink-700"
-                onClick={handleReviewOpen}
+                onClick={() => dispatch(setReviewModal('scale-100'))}
               >
                 Drop your review
               </button>
