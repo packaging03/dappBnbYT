@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import { useAccount } from 'wagmi'
 import { useRouter } from 'next/router'
-import { generateFakeReviews } from '@/utils/fakeData'
 import {
   getApartment,
   getReviews,
