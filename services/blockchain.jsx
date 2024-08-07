@@ -10,7 +10,7 @@ const fromWei = (num) => ethers.formatEther(num)
 let ethereum, tx
 
 if (typeof window !== 'undefined') ethereum = window.ethereum
-const { setBookings, setTimestamps, setReviews } = globalActions
+const { setBookings, setTimestamps, setReviews, setApartment } = globalActions
 
 const getEthereumContracts = async () => {
   const accounts = await ethereum?.request?.({ method: 'eth_accounts' })

@@ -1,13 +1,24 @@
 import { Booking } from '@/components'
 import { useRouter } from 'next/router'
 import { getApartment, getBookings } from '@/services/blockchain'
+import { useDispatch, useSelector } from 'react-redux'
+import { globalActions } from '@/store/globalSlices'
+import { useEffect } from 'react'
 
 const Bookings = ({ apartmentData, bookingsData }) => {
   const router = useRouter()
   const { roomId } = router.query
-  const apartment = apartmentData
-  const bookings = bookingsData
-  
+  // const apartment = apartmentData
+  // const bookings = bookingsData
+  const dispatch = useDispatch()
+  const { setApartment, setBookings } = globalActions
+  const { apartment, bookings } = useSelector((states) => states.globalStates)
+
+  useEffect(() => {
+    dispatch(setApartment(apartmentData))
+    dispatch(setBookings(bookingsData))
+  }, [dispatch, setApartment, apartmentData, setBookings, bookingsData])
+
   return (
     <div className="w-full sm:w-3/5 mx-auto mt-8">
       <h1 className="text-center text-3xl text-black font-bold">Bookings</h1>
