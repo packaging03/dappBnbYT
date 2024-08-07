@@ -207,6 +207,27 @@ const refundBooking = async (aid, bookingId) => {
   }
 }
 
+const claimFunds = async (aid, bookingId) => {
+  if (!ethereum) {
+    reportError('Please install a browser provider')
+    return Promise.reject(new Error('Browser provider not installed'))
+  }
+
+  try {
+    const contract = await getEthereumContracts()
+    tx = await contract.claimFunds(aid, bookingId)
+
+    await tx.wait()
+    const bookings = await getBookings(aid)
+
+    store.dispatch(setBookings(bookings))
+    return Promise.resolve(tx)
+  } catch (error) {
+    reportError(error)
+    return Promise.reject(error)
+  }
+}
+
 const addReview = async (aid, comment) => {
   if (!ethereum) {
     reportError('Please install a browser provider')
@@ -278,4 +299,5 @@ export {
   getReviews,
   getQualifiedReviewers,
   getSecurityFee,
+  claimFunds,
 }
