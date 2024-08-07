@@ -250,39 +250,47 @@ const addReview = async (aid, comment) => {
 }
 
 const structureApartments = (apartments) =>
-  apartments.map((apartment) => ({
-    id: Number(apartment.id),
-    name: apartment.name,
-    owner: apartment.owner,
-    description: apartment.description,
-    location: apartment.location,
-    price: fromWei(apartment.price),
-    deleted: apartment.deleted,
-    images: apartment.images.split(','),
-    rooms: Number(apartment.rooms),
-    timestamp: Number(apartment.timestamp),
-    booked: apartment.booked,
-  }))
+  apartments
+    .map((apartment) => ({
+      id: Number(apartment.id),
+      name: apartment.name,
+      owner: apartment.owner,
+      description: apartment.description,
+      location: apartment.location,
+      price: fromWei(apartment.price),
+      deleted: apartment.deleted,
+      images: apartment.images.split(','),
+      rooms: Number(apartment.rooms),
+      timestamp: Number(apartment.timestamp),
+      booked: apartment.booked,
+    }))
+    .sort((a, b) => b.timestamp - a.timestamp)
 
 const structuredBookings = (bookings) =>
-  bookings.map((booking) => ({
-    id: Number(booking.id),
-    aid: Number(booking.aid),
-    tenant: booking.tenant,
-    date: Number(booking.date),
-    price: fromWei(booking.price),
-    checked: booking.checked,
-    cancelled: booking.cancelled,
-  }))
+  bookings
+    .map((booking) => ({
+      id: Number(booking.id),
+      aid: Number(booking.aid),
+      tenant: booking.tenant,
+      date: Number(booking.date),
+      price: fromWei(booking.price),
+      checked: booking.checked,
+      cancelled: booking.cancelled,
+      abandoned: booking.abandoned,
+    }))
+    .sort((a, b) => b.date - a.date)
+    .reverse()
 
 const structuredReviews = (reviews) =>
-  reviews.map((review) => ({
-    id: Number(review.id),
-    aid: Number(review.aid),
-    text: review.reviewText,
-    owner: review.owner,
-    timestamp: Number(review.timestamp),
-  }))
+  reviews
+    .map((review) => ({
+      id: Number(review.id),
+      aid: Number(review.aid),
+      text: review.reviewText,
+      owner: review.owner,
+      timestamp: Number(review.timestamp),
+    }))
+    .sort((a, b) => b.timestamp - a.timestamp)
 
 export {
   getMyApartments,
