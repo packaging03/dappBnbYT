@@ -11,6 +11,7 @@ export default function Edit({ apartment }) {
   const [name, setName] = useState(apartment.name)
   const [description, setDescription] = useState(apartment.description)
   const [location, setLocation] = useState(apartment.location)
+  const [email, setEmail] = useState(apartment.email)
   const [rooms, setRooms] = useState(apartment.rooms)
   const [images, setImages] = useState('')
   const [price, setPrice] = useState(apartment.price)
@@ -19,7 +20,8 @@ export default function Edit({ apartment }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!name || !location || !description || !rooms || links.length != 5 || !price) return
+    if (!name || !location || !description || !rooms || links.length != 5 || !price || !email)
+      return
 
     const params = {
       ...apartment,
@@ -29,6 +31,7 @@ export default function Edit({ apartment }) {
       rooms,
       images: links.slice(0, 5).join(','),
       price,
+      email,
     }
 
     await toast.promise(
@@ -142,6 +145,23 @@ export default function Edit({ apartment }) {
                 </button>
               </div>
             ))}
+          </div>
+
+          <div
+            className="flex flex-row justify-between items-center
+          border border-gray-300 p-2 rounded-xl mt-5"
+          >
+            <input
+              className="block w-full text-sm
+                text-slate-500 bg-transparent border-0
+                focus:outline-none focus:ring-0"
+              type="email"
+              name="email"
+              placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              required
+            />
           </div>
 
           <div

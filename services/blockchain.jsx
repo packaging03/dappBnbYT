@@ -88,7 +88,8 @@ const createApartment = async (apartment) => {
       apartment.location,
       apartment.images,
       apartment.rooms,
-      toWei(apartment.price)
+      toWei(apartment.price),
+      apartment.email,
     )
     await tx.wait()
 
@@ -114,7 +115,8 @@ const updateApartment = async (apartment) => {
       apartment.location,
       apartment.images,
       apartment.rooms,
-      toWei(apartment.price)
+      toWei(apartment.price),
+      apartment.email
     )
     await tx.wait()
 
@@ -263,6 +265,7 @@ const structureApartments = (apartments) =>
       rooms: Number(apartment.rooms),
       timestamp: Number(apartment.timestamp),
       booked: apartment.booked,
+      email: apartment.email, 
     }))
     .sort((a, b) => b.timestamp - a.timestamp)
 
