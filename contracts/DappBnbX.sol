@@ -21,6 +21,7 @@ contract DappBanX is Ownable, ReentrancyGuard {
     bool booked;
     bool deleted;
     uint timestamp;
+    string email;
   }
 
   struct BookingStruct {
@@ -63,12 +64,14 @@ contract DappBanX is Ownable, ReentrancyGuard {
     string memory location,
     string memory images,
     uint rooms,
-    uint price
+    uint price,
+    string memory email
   ) public {
     require(bytes(name).length > 0, 'Name cannot be empty');
     require(bytes(description).length > 0, 'Description cannot be empty');
     require(bytes(location).length > 0, 'Location cannot be empty');
     require(bytes(images).length > 0, 'Images cannot be empty');
+    require(bytes(email).length > 0, 'Email cannot be empty');
     require(rooms > 0, 'Rooms cannot be zero');
     require(price > 0 ether, 'Price cannot be zero');
 
@@ -83,6 +86,7 @@ contract DappBanX is Ownable, ReentrancyGuard {
     lodge.price = price;
     lodge.owner = msg.sender;
     lodge.timestamp = currentTime();
+    lodge.email = email;
 
     apartmentExist[lodge.id] = true;
     apartments[_totalApartments.current()] = lodge;
@@ -95,7 +99,8 @@ contract DappBanX is Ownable, ReentrancyGuard {
     string memory location,
     string memory images,
     uint rooms,
-    uint price
+    uint price,
+    string memory email
   ) public {
     require(apartmentExist[id] == true, 'Apartment not found');
     require(msg.sender == apartments[id].owner, 'Unauthorized personnel, owner only');
@@ -103,6 +108,7 @@ contract DappBanX is Ownable, ReentrancyGuard {
     require(bytes(description).length > 0, 'Description cannot be empty');
     require(bytes(location).length > 0, 'Location cannot be empty');
     require(bytes(images).length > 0, 'Images cannot be empty');
+    require(bytes(email).length > 0, 'Email cannot be empty');
     require(rooms > 0, 'Rooms cannot be zero');
     require(price > 0 ether, 'Price cannot be zero');
 
@@ -113,6 +119,7 @@ contract DappBanX is Ownable, ReentrancyGuard {
     lodge.images = images;
     lodge.rooms = rooms;
     lodge.price = price;
+    lodge.email = email;
 
     apartments[id] = lodge;
   }

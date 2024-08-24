@@ -17,6 +17,7 @@ describe('Contracts', () => {
   const location = 'PHC'
   const newName = 'Update apartment'
   const description = 'Lorem Ipsum dalum'
+  const email = 'yhemi06@gmail.com'
   const images = [
     'https://a0.muscache.com/im/pictures/miso/Hosting-3524556/original/24e9b114-7db5-4fab-8994-bc16f263ad1d.jpeg?im_w=720',
     'https://a0.muscache.com/im/pictures/miso/Hosting-5264493/original/10d2c21f-84c2-46c5-b20b-b51d1c2c971a.jpeg?im_w=720',
@@ -38,7 +39,7 @@ describe('Contracts', () => {
     beforeEach(async () => {
       await contract
         .connect(owner)
-        .createApartment(name, description, location, images.join(','), rooms, toWei(price))
+        .createApartment(name, description, location, images.join(','), rooms, toWei(price), email)
     })
 
     it('Should confirm apartment in array', async () => {
@@ -49,6 +50,7 @@ describe('Contracts', () => {
       expect(result.name).to.be.equal(name)
       expect(result.description).to.be.equal(description)
       expect(result.images).to.be.equal(images.join(','))
+      expect(result.email).to.be.equal(email)
     })
 
     it('Should confirm apartment update', async () => {
@@ -65,7 +67,8 @@ describe('Contracts', () => {
           location,
           images.join(','),
           rooms,
-          toWei(newPrice)
+          toWei(newPrice),
+          email
         )
 
       result = await contract.getApartment(id)
@@ -95,7 +98,15 @@ describe('Contracts', () => {
       beforeEach(async () => {
         await contract
           .connect(owner)
-          .createApartment(name, description, location, images.join(','), rooms, toWei(price))
+          .createApartment(
+            name,
+            description,
+            location,
+            images.join(','),
+            rooms,
+            toWei(price),
+            email
+          )
 
         const amount = price * dates1.length + (price * dates1.length * securityFee) / 100
         await contract.connect(tenant1).bookApartment(id, dates1, {
@@ -174,7 +185,15 @@ describe('Contracts', () => {
       beforeEach(async () => {
         await contract
           .connect(owner)
-          .createApartment(name, description, location, images.join(','), rooms, toWei(price))
+          .createApartment(
+            name,
+            description,
+            location,
+            images.join(','),
+            rooms,
+            toWei(price),
+            email
+          )
       })
 
       it('Should prevent booking with wrong id', async () => {

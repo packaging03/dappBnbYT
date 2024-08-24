@@ -33,7 +33,7 @@ const ButtonGroup = () => {
             rounded-l-full
             px-5
             py-3
-            text-[#ff385c]
+            text-gray-900
             font-medium
             text-sm
             leading-tight
@@ -53,7 +53,7 @@ const ButtonGroup = () => {
               px-5
               py-3 
               border-x border-gray-300
-              text-[#ff385c]
+              text-gray-900
               font-medium
               text-sm
               leading-tight
@@ -71,10 +71,11 @@ const ButtonGroup = () => {
         <button
           className="
             rounded-r-full
+            flex
             px-5
             py-3
-            text-[#ff385c]
-            font-medium
+            text-[#707070]
+            font-light
             text-sm
             leading-tight
             hover:bg-black hover:bg-opacity-5
@@ -84,7 +85,8 @@ const ButtonGroup = () => {
             ease-in-out
           "
         >
-          <p className="flex items-center">Any week</p>
+          <p className="flex items-center">Add guests</p>
+        
         </button>
       </div>
     </div>
