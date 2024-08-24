@@ -44,6 +44,7 @@ const generateFakeApartment = (count) => {
     const name = faker.word.words(5)
     const deleted = faker.datatype.boolean()
     const description = faker.lorem.paragraph()
+    const email = 'yhemi06@gmail.com'
     const location = faker.lorem.word()
     const price = faker.number.float({
       min: 0.1,
@@ -73,6 +74,7 @@ const generateFakeApartment = (count) => {
       owner,
       timestamp,
       deleted,
+      email,
     })
   }
 
@@ -86,7 +88,8 @@ async function createApartments(contract, apartment) {
     apartment.location,
     apartment.images,
     apartment.rooms,
-    apartment.price
+    apartment.price,
+    apartment.email
   )
   await tx.wait()
 }

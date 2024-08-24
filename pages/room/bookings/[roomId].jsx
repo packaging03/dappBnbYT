@@ -8,8 +8,6 @@ import { useEffect } from 'react'
 const Bookings = ({ apartmentData, bookingsData }) => {
   const router = useRouter()
   const { roomId } = router.query
-  // const apartment = apartmentData
-  // const bookings = bookingsData
   const dispatch = useDispatch()
   const { setApartment, setBookings } = globalActions
   const { apartment, bookings } = useSelector((states) => states.globalStates)

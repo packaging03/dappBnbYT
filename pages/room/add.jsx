@@ -11,6 +11,7 @@ export default function Add() {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [location, setLocation] = useState('')
+  const [email, setEmail] = useState('')
   const [rooms, setRooms] = useState('')
   const [images, setImages] = useState('')
   const [price, setPrice] = useState('')
@@ -19,7 +20,8 @@ export default function Add() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!name || !location || !description || !rooms || links.length != 5 || !price) return
+    if (!name || !location || !description || !rooms || links.length != 5 || !price || !email)
+      return
 
     const params = {
       name,
@@ -28,6 +30,7 @@ export default function Add() {
       rooms,
       images: links.slice(0, 5).join(','),
       price,
+      email,
     }
 
     await toast.promise(
@@ -141,6 +144,22 @@ export default function Add() {
                 </button>
               </div>
             ))}
+          </div>
+          <div
+            className="flex flex-row justify-between items-center
+          border border-gray-300 p-2 rounded-xl mt-5"
+          >
+            <input
+              className="block w-full text-sm
+                text-slate-500 bg-transparent border-0
+                focus:outline-none focus:ring-0"
+              type="email"
+              name="email"
+              placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              required
+            />
           </div>
 
           <div
