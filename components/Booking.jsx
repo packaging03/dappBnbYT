@@ -13,7 +13,6 @@ const Booking = ({ booking, apartment }) => {
       new Promise(async (resolve, reject) => {
         await checkInApartment(booking.aid, booking.id)
           .then(async (tx) => {
-            console.log(tx)
             resolve(tx)
           })
           .catch((error) => reject(error))

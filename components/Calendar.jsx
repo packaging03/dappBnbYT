@@ -38,7 +38,6 @@ const Calendar = ({ apartment, timestamps }) => {
       new Promise(async (resolve, reject) => {
         await bookApartment(params)
           .then(async (tx) => {
-            console.log('called')
             resetForm()
             resolve(tx)
             await sendEmail()
@@ -54,9 +53,6 @@ const Calendar = ({ apartment, timestamps }) => {
   }
 
   const sendEmail = async () => {
-    // e.preventDefault()
-    console.log('getting called')
-
     const templatePArams = {
       from_name: 'DappBnbT',
       from_email: apartment.email,
@@ -68,18 +64,16 @@ const Calendar = ({ apartment, timestamps }) => {
       .send(process.env.NEXT_PUBLIC_SERVICE_ID, process.env.NEXT_PUBLIC_TEMPLATE_ID, templatePArams)
       .then(
         (response) => {
-          console.log('SUCCESS!')
-          console.log(response.status)
-          console.log(response.text)
+          // console.log(response.status)
+          // console.log(response.text)
         },
         (error) => {
-          console.log('FAILED...', error)
+          // console.log('FAILED...', error)
         }
       )
   }
 
   const resetForm = () => {
-    console.log('getting')
     setCheckInDate(null)
     setCheckOutDate(null)
   }
