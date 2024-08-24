@@ -1,4 +1,4 @@
-import { BiMedal, BiBookOpen } from 'react-icons/bi'
+import { BiMedal, BiBookOpen, BiMailSend } from 'react-icons/bi'
 import { FiCalendar } from 'react-icons/fi'
 
 const Description = ({ apartment }) => {
@@ -12,6 +12,13 @@ const Description = ({ apartment }) => {
         <div>
           <h1 className="text-xl font-semibold">Location</h1>
           <p className="cursor-pointer">{apartment?.location}</p>
+        </div>
+      </div>
+      <div className=" flex space-x-4 ">
+        <BiMailSend className="text-4xl" />
+        <div>
+          <h1 className="text-xl font-semibold">Email</h1>
+          <p className="cursor-pointer">{apartment?.email}</p>
         </div>
       </div>
       <div className=" flex space-x-4">

@@ -1,6 +1,7 @@
 import moment from 'moment'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import emailjs from '@emailjs/browser'
 import { toast } from 'react-toastify'
 import DatePicker from 'react-datepicker'
 import { FaEthereum } from 'react-icons/fa'
@@ -10,6 +11,8 @@ const Calendar = ({ apartment, timestamps }) => {
   const [checkInDate, setCheckInDate] = useState(null)
   const [checkOutDate, setCheckOutDate] = useState(null)
   const securityFee = 5
+
+  useEffect(() => emailjs.init(process.env.NEXT_PUBLIC_PUBLIC_KEY), [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -35,8 +38,10 @@ const Calendar = ({ apartment, timestamps }) => {
       new Promise(async (resolve, reject) => {
         await bookApartment(params)
           .then(async (tx) => {
+            console.log('called')
             resetForm()
             resolve(tx)
+            await sendEmail()
           })
           .catch(() => reject())
       }),
@@ -48,7 +53,33 @@ const Calendar = ({ apartment, timestamps }) => {
     )
   }
 
+  const sendEmail = async () => {
+    // e.preventDefault()
+    console.log('getting called')
+
+    const templatePArams = {
+      from_name: 'DappBnbT',
+      from_email: apartment.email,
+      to_name: 'yhemi06@gmail.com',
+      message: 'Your Apartment has just been booked by a new user',
+    }
+
+    emailjs
+      .send(process.env.NEXT_PUBLIC_SERVICE_ID, process.env.NEXT_PUBLIC_TEMPLATE_ID, templatePArams)
+      .then(
+        (response) => {
+          console.log('SUCCESS!')
+          console.log(response.status)
+          console.log(response.text)
+        },
+        (error) => {
+          console.log('FAILED...', error)
+        }
+      )
+  }
+
   const resetForm = () => {
+    console.log('getting')
     setCheckInDate(null)
     setCheckOutDate(null)
   }
